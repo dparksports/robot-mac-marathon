@@ -6,6 +6,8 @@ recovered_*.mov
 untrunc/
 ffmpeg-darwin-arm64
 ffmpeg-darwin-arm64.gz
+timelapse
+timelapse_security
 
 # macOS
 .DS_Store
