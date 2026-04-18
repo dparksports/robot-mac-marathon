@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security Recordings Calendar</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e17;
+    --surface: #111827;
+    --surface2: #1a2236;
+    --border: #1e2d4a;
+    --text: #e2e8f0;
+    --text-dim: #64748b;
+    --accent: #6366f1;
+    --accent-glow: rgba(99, 102, 241, 0.15);
+    --green: #22c55e;
+    --green-dim: rgba(34, 197, 94, 0.15);
+    --red: #ef4444;
+    --red-dim: rgba(239, 68, 68, 0.12);
+    --amber: #f59e0b;
+    --amber-dim: rgba(245, 158, 11, 0.12);
+    --blue: #3b82f6;
+    --blue-dim: rgba(59, 130, 246, 0.15);
+    --video-color: #a78bfa;
+    --audio-color: #38bdf8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 32px;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    background: linear-gradient(135deg, #c084fc, #6366f1, #38bdf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-bottom: 28px;
+  }
+
+  /* Stats bar */
+  .stats-bar {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 22px;
+    flex: 1;
+    min-width: 150px;
+  }
+
+  .stat-card .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+
+  .stat-card .value {
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .stat-card .detail {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 3px;
+  }
+
+  .stat-card.good .value { color: var(--green); }
+  .stat-card.bad .value { color: var(--red); }
+  .stat-card.info .value { color: var(--blue); }
+  .stat-card.warn .value { color: var(--amber); }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  /* Calendar grid */
+  .calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    margin-bottom: 32px;
+  }
+
+  .cal-header {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    padding: 10px 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .cal-day {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    min-height: 120px;
+    transition: all 0.2s ease;
+    cursor: default;
+    position: relative;
+  }
+
+  .cal-day:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px var(--accent-glow);
+    transform: translateY(-1px);
+  }
+
+  .cal-day.empty {
+    background: transparent;
+    border-color: transparent;
+    min-height: auto;
+  }
+
+  .cal-day.empty:hover {
+    border-color: transparent;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .cal-day.today {
+    border-color: var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+
+  .cal-day.has-data {
+    background: var(--surface2);
+  }
+
+  .day-number {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .cal-day.has-data .day-number {
+    color: var(--text);
+  }
+
+  .cal-day.today .day-number {
+    color: var(--accent);
+  }
+
+  /* File entries */
+  .file-entry {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 6px;
+    border-radius: 5px;
+    margin-bottom: 3px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .file-entry:hover {
+    background: rgba(255,255,255,0.06);
+  }
+
+  .file-entry .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .file-entry.video .dot { background: var(--video-color); }
+  .file-entry.audio .dot { background: var(--audio-color); }
+  .file-entry.ok { color: var(--text); }
+  .file-entry.bad { color: var(--red); opacity: 0.7; }
+  .file-entry.bad .dot { background: var(--red); }
+  .file-entry.tiny { color: var(--amber); opacity: 0.7; }
+  .file-entry.tiny .dot { background: var(--amber); }
+
+  .file-time { font-weight: 500; }
+  .file-size { color: var(--text-dim); font-size: 10px; }
+
+  .more-indicator {
+    font-size: 10px;
+    color: var(--text-dim);
+    padding: 2px 6px;
+    cursor: pointer;
+  }
+
+  .more-indicator:hover { color: var(--accent); }
+
+  /* Timeline section */
+  .timeline-section {
+    margin-top: 36px;
+  }
+
+  .timeline-section h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  .timeline-bar-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    overflow-x: auto;
+  }
+
+  .timeline-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .timeline-row:last-child { margin-bottom: 0; }
+
+  .timeline-label {
+    width: 90px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-dim);
+    flex-shrink: 0;
+  }
+
+  .timeline-track {
+    flex: 1;
+    height: 28px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 6px;
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .timeline-block {
+    position: absolute;
+    top: 3px;
+    height: 20px;
+    border-radius: 4px;
+    min-width: 3px;
+    transition: opacity 0.15s;
+    cursor: pointer;
+  }
+
+  .timeline-block:hover {
+    opacity: 0.85 !important;
+    box-shadow: 0 0 8px rgba(255,255,255,0.1);
+  }
+
+  .timeline-block.video {
+    background: var(--video-color);
+    opacity: 0.75;
+  }
+
+  .timeline-block.audio {
+    background: var(--audio-color);
+    opacity: 0.6;
+  }
+
+  .timeline-block.empty-file {
+    background: var(--red);
+    opacity: 0.5;
+    height: 10px;
+    top: 8px;
+  }
+
+  .timeline-hours {
+    display: flex;
+    margin-top: 4px;
+    padding-left: 90px;
+  }
+
+  .timeline-hour {
+    flex: 1;
+    text-align: left;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  /* Tooltip */
+  .tooltip {
+    display: none;
+    position: fixed;
+    background: #1e293b;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 12px;
+    z-index: 100;
+    max-width: 320px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    pointer-events: none;
+  }
+
+  .tooltip.show { display: block; }
+  .tooltip .tt-title { font-weight: 600; margin-bottom: 6px; font-size: 13px; }
+  .tooltip .tt-row { color: var(--text-dim); margin-bottom: 2px; }
+  .tooltip .tt-row span { color: var(--text); }
+
+  /* Session detail panel */
+  .session-detail {
+    margin-top: 36px;
+  }
+
+  .session-detail h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  .session-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 12px;
+  }
+
+  .session-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    transition: all 0.2s;
+  }
+
+  .session-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 16px var(--accent-glow);
+  }
+
+  .session-card .session-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--accent);
+  }
+
+  .session-card .file-list {
+    list-style: none;
+  }
+
+  .session-card .file-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .session-card .file-list li:last-child { border-bottom: none; }
+
+  .session-card .file-list .fname { color: var(--text); }
+  .session-card .file-list .fsize { color: var(--text-dim); }
+
+  .badge {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .badge.ok { background: var(--green-dim); color: var(--green); }
+  .badge.empty { background: var(--red-dim); color: var(--red); }
+  .badge.tiny { background: var(--amber-dim); color: var(--amber); }
+
+  @media (max-width: 800px) {
+    body { padding: 16px; }
+    .calendar { grid-template-columns: repeat(7, 1fr); }
+    .cal-day { min-height: 80px; padding: 6px; }
+    .file-entry { font-size: 9px; padding: 2px 3px; }
+    .stats-bar { gap: 8px; }
+    .stat-card { padding: 12px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>🛡️ Security Recordings</h1>
+<p class="subtitle">April 3 – 10, 2026 &nbsp;•&nbsp; robot-mac-main</p>
+
+<div class="stats-bar" id="statsBar"></div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--video-color)"></div>Video (.mov)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--audio-color)"></div>Audio (.m4a)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Good</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Empty / Corrupted</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div>Tiny / Partial</div>
+</div>
+
+<div class="calendar" id="calendar"></div>
+
+<div class="timeline-section">
+  <h2>📊 Coverage Timeline by Day</h2>
+  <div class="timeline-bar-container" id="timelineContainer"></div>
+</div>
+
+<div class="session-detail">
+  <h2>📂 All Sessions</h2>
+  <div class="session-grid" id="sessionGrid"></div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+// ─── Raw data ───
+const files = [
+  // MOV files
+  {type:'video',name:'trigger_2026-04-03_23-24-29.mov',date:'2026-04-03',time:'23:24',size:0,session:'security_2026-04-03_23-24-29'},
+  {type:'video',name:'trigger_2026-04-03_23-24-33.mov',date:'2026-04-03',time:'23:24',size:0,session:'security_2026-04-03_23-24-33'},
+  {type:'video',name:'trigger_2026-04-03_23-24-37.mov',date:'2026-04-03',time:'23:24',size:0,session:'security_2026-04-03_23-24-37'},
+  {type:'video',name:'trigger_2026-04-03_23-24-41.mov',date:'2026-04-03',time:'23:24',size:0,session:'security_2026-04-03_23-24-41'},
+  {type:'video',name:'trigger_2026-04-03_23-24-45.mov',date:'2026-04-03',time:'23:24',size:0,session:'security_2026-04-03_23-24-45'},
+  {type:'video',name:'trigger_2026-04-03_23-24-49.mov',date:'2026-04-03',time:'23:24',size:0,session:'security_2026-04-03_23-24-48'},
+  {type:'video',name:'trigger_2026-04-03_23-24-52.mov',date:'2026-04-03',time:'23:24',size:0,session:'security_2026-04-03_23-24-52'},
+  {type:'video',name:'trigger_2026-04-03_23-24-56.mov',date:'2026-04-03',time:'23:24',size:0,session:'security_2026-04-03_23-24-56'},
+  {type:'video',name:'trigger_2026-04-03_23-25-00.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-00'},
+  {type:'video',name:'trigger_2026-04-03_23-25-04.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-04'},
+  {type:'video',name:'trigger_2026-04-03_23-25-07.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-07'},
+  {type:'video',name:'trigger_2026-04-03_23-25-11.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-11'},
+  {type:'video',name:'trigger_2026-04-03_23-25-15.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-15'},
+  {type:'video',name:'trigger_2026-04-03_23-25-19.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-19'},
+  {type:'video',name:'trigger_2026-04-03_23-25-23.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-22'},
+  {type:'video',name:'trigger_2026-04-03_23-25-26.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-26'},
+  {type:'video',name:'trigger_2026-04-03_23-25-30.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-30'},
+  {type:'video',name:'trigger_2026-04-03_23-25-34.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-34'},
+  {type:'video',name:'trigger_2026-04-03_23-25-38.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-38'},
+  {type:'video',name:'trigger_2026-04-03_23-25-42.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-41'},
+  {type:'video',name:'trigger_2026-04-03_23-25-45.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-45'},
+  {type:'video',name:'trigger_2026-04-03_23-25-49.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-49'},
+  {type:'video',name:'trigger_2026-04-03_23-25-53.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-53'},
+  {type:'video',name:'trigger_2026-04-03_23-25-57.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-57'},
+  {type:'video',name:'trigger_2026-04-03_23-26-01.mov',date:'2026-04-03',time:'23:26',size:0,session:'security_2026-04-03_23-26-00'},
+  {type:'video',name:'trigger_2026-04-03_23-26-04.mov',date:'2026-04-03',time:'23:26',size:0,session:'security_2026-04-03_23-26-04'},
+  {type:'video',name:'trigger_2026-04-03_23-26-08.mov',date:'2026-04-03',time:'23:26',size:0,session:'security_2026-04-03_23-26-08'},
+  {type:'video',name:'trigger_2026-04-03_23-26-12.mov',date:'2026-04-03',time:'23:26',size:0,session:'security_2026-04-03_23-26-12'},
+  {type:'video',name:'trigger_2026-04-03_23-26-16.mov',date:'2026-04-03',time:'23:26',size:0,session:'security_2026-04-03_23-26-16'},
+  {type:'video',name:'trigger_2026-04-03_23-34-02.mov',date:'2026-04-03',time:'23:34',size:265434615,session:'security_2026-04-03_23-34-01'},
+  {type:'video',name:'trigger_2026-04-04_00-34-05.mov',date:'2026-04-04',time:'00:34',size:773624135,session:'security_2026-04-04_00-34-05'},
+  {type:'video',name:'trigger_2026-04-04_03-34-08.mov',date:'2026-04-04',time:'03:34',size:488421473,session:'security_2026-04-04_03-34-08'},
+  {type:'video',name:'trigger_2026-04-07_22-10-21.mov',date:'2026-04-07',time:'22:10',size:47666561,session:'security_2026-04-07_22-10-21'},
+  {type:'video',name:'trigger_2026-04-08_08-33-02.mov',date:'2026-04-08',time:'08:33',size:38418409,session:'security_2026-04-08_08-33-02'},
+  {type:'video',name:'trigger_2026-04-09_10-13-07.mov',date:'2026-04-09',time:'10:13',size:307104228,session:'security_2026-04-08_22-41-13'},
+  {type:'video',name:'trigger_2026-04-09_14-45-42.mov',date:'2026-04-09',time:'14:45',size:313271290,session:'security_2026-04-09_14-45-42'},
+  {type:'video',name:'trigger_2026-04-09_15-45-45.mov',date:'2026-04-09',time:'15:45',size:265769580,session:'security_2026-04-09_15-45-45'},
+  {type:'video',name:'trigger_2026-04-09_16-45-49.mov',date:'2026-04-09',time:'16:45',size:40390827,session:'security_2026-04-09_16-45-48'},
+  {type:'video',name:'trigger_2026-04-09_19-51-12.mov',date:'2026-04-09',time:'19:51',size:608410,session:'security_2026-04-09_19-51-12'},
+  {type:'video',name:'trigger_2026-04-09_20-51-02.mov',date:'2026-04-09',time:'20:51',size:138009111,session:'security_2026-04-09_20-51-01'},
+  {type:'video',name:'trigger_2026-04-09_22-51-05.mov',date:'2026-04-09',time:'22:51',size:70914040,session:'security_2026-04-09_22-51-05'},
+
+  // M4A files  
+  {type:'audio',name:'audio_2026-04-03_23-24-29.m4a',date:'2026-04-03',time:'23:24',size:5019,session:'security_2026-04-03_23-24-29'},
+  {type:'audio',name:'audio_2026-04-03_23-24-33.m4a',date:'2026-04-03',time:'23:24',size:3363,session:'security_2026-04-03_23-24-33'},
+  {type:'audio',name:'audio_2026-04-03_23-24-37.m4a',date:'2026-04-03',time:'23:24',size:3387,session:'security_2026-04-03_23-24-37'},
+  {type:'audio',name:'audio_2026-04-03_23-24-41.m4a',date:'2026-04-03',time:'23:24',size:3302,session:'security_2026-04-03_23-24-41'},
+  {type:'audio',name:'audio_2026-04-03_23-24-45.m4a',date:'2026-04-03',time:'23:24',size:3296,session:'security_2026-04-03_23-24-45'},
+  {type:'audio',name:'audio_2026-04-03_23-24-49.m4a',date:'2026-04-03',time:'23:24',size:3253,session:'security_2026-04-03_23-24-48'},
+  {type:'audio',name:'audio_2026-04-03_23-24-52.m4a',date:'2026-04-03',time:'23:24',size:3241,session:'security_2026-04-03_23-24-52'},
+  {type:'audio',name:'audio_2026-04-03_23-24-56.m4a',date:'2026-04-03',time:'23:24',size:3181,session:'security_2026-04-03_23-24-56'},
+  {type:'audio',name:'audio_2026-04-03_23-25-00.m4a',date:'2026-04-03',time:'23:25',size:3311,session:'security_2026-04-03_23-25-00'},
+  {type:'audio',name:'audio_2026-04-03_23-25-04.m4a',date:'2026-04-03',time:'23:25',size:3285,session:'security_2026-04-03_23-25-04'},
+  {type:'audio',name:'audio_2026-04-03_23-25-07.m4a',date:'2026-04-03',time:'23:25',size:3256,session:'security_2026-04-03_23-25-07'},
+  {type:'audio',name:'audio_2026-04-03_23-25-11.m4a',date:'2026-04-03',time:'23:25',size:3306,session:'security_2026-04-03_23-25-11'},
+  {type:'audio',name:'audio_2026-04-03_23-25-15.m4a',date:'2026-04-03',time:'23:25',size:3053,session:'security_2026-04-03_23-25-15'},
+  {type:'audio',name:'audio_2026-04-03_23-25-19.m4a',date:'2026-04-03',time:'23:25',size:3314,session:'security_2026-04-03_23-25-19'},
+  {type:'audio',name:'audio_2026-04-03_23-25-23.m4a',date:'2026-04-03',time:'23:25',size:3288,session:'security_2026-04-03_23-25-22'},
+  {type:'audio',name:'audio_2026-04-03_23-25-26.m4a',date:'2026-04-03',time:'23:25',size:3278,session:'security_2026-04-03_23-25-26'},
+  {type:'audio',name:'audio_2026-04-03_23-25-30.m4a',date:'2026-04-03',time:'23:25',size:3270,session:'security_2026-04-03_23-25-30'},
+  {type:'audio',name:'audio_2026-04-03_23-25-34.m4a',date:'2026-04-03',time:'23:25',size:3251,session:'security_2026-04-03_23-25-34'},
+  {type:'audio',name:'audio_2026-04-03_23-25-38.m4a',date:'2026-04-03',time:'23:25',size:2985,session:'security_2026-04-03_23-25-38'},
+  {type:'audio',name:'audio_2026-04-03_23-25-42.m4a',date:'2026-04-03',time:'23:25',size:3604,session:'security_2026-04-03_23-25-41'},
+  {type:'audio',name:'audio_2026-04-03_23-25-45.m4a',date:'2026-04-03',time:'23:25',size:3442,session:'security_2026-04-03_23-25-45'},
+  {type:'audio',name:'audio_2026-04-03_23-25-49.m4a',date:'2026-04-03',time:'23:25',size:3284,session:'security_2026-04-03_23-25-49'},
+  {type:'audio',name:'audio_2026-04-03_23-25-53.m4a',date:'2026-04-03',time:'23:25',size:3416,session:'security_2026-04-03_23-25-53'},
+  {type:'audio',name:'audio_2026-04-03_23-25-57.m4a',date:'2026-04-03',time:'23:25',size:3106,session:'security_2026-04-03_23-25-57'},
+  {type:'audio',name:'audio_2026-04-03_23-26-01.m4a',date:'2026-04-03',time:'23:26',size:3454,session:'security_2026-04-03_23-26-00'},
+  {type:'audio',name:'audio_2026-04-03_23-26-04.m4a',date:'2026-04-03',time:'23:26',size:3402,session:'security_2026-04-03_23-26-04'},
+  {type:'audio',name:'audio_2026-04-03_23-26-08.m4a',date:'2026-04-03',time:'23:26',size:3077,session:'security_2026-04-03_23-26-08'},
+  {type:'audio',name:'audio_2026-04-03_23-26-12.m4a',date:'2026-04-03',time:'23:26',size:3633,session:'security_2026-04-03_23-26-12'},
+  {type:'audio',name:'audio_2026-04-03_23-26-16.m4a',date:'2026-04-03',time:'23:26',size:3417,session:'security_2026-04-03_23-26-16'},
+  {type:'audio',name:'audio_2026-04-03_23-34-02.m4a',date:'2026-04-03',time:'23:34',size:29661730,session:'security_2026-04-03_23-34-01'},
+  {type:'audio',name:'audio_2026-04-04_00-34-02.m4a',date:'2026-04-04',time:'00:34',size:0,session:'security_2026-04-03_23-34-01'},
+  {type:'audio',name:'audio_2026-04-04_00-34-05.m4a',date:'2026-04-04',time:'00:34',size:29505077,session:'security_2026-04-04_00-34-05'},
+  {type:'audio',name:'audio_2026-04-04_01-34-05.m4a',date:'2026-04-04',time:'01:34',size:29493970,session:'security_2026-04-04_00-34-05'},
+  {type:'audio',name:'audio_2026-04-04_02-34-05.m4a',date:'2026-04-04',time:'02:34',size:29503033,session:'security_2026-04-04_00-34-05'},
+  {type:'audio',name:'audio_2026-04-04_03-34-05.m4a',date:'2026-04-04',time:'03:34',size:0,session:'security_2026-04-04_00-34-05'},
+  {type:'audio',name:'audio_2026-04-04_03-34-08.m4a',date:'2026-04-04',time:'03:34',size:4930290,session:'security_2026-04-04_03-34-08'},
+  {type:'audio',name:'audio_2026-04-04_19-49-22.m4a',date:'2026-04-04',time:'19:49',size:9231745,session:'security_2026-04-04_03-34-08'},
+  {type:'audio',name:'audio_2026-04-05_09-14-41.m4a',date:'2026-04-05',time:'09:14',size:6881402,session:'security_2026-04-04_03-34-08'},
+  {type:'audio',name:'audio_2026-04-05_23-13-11.m4a',date:'2026-04-05',time:'23:13',size:15838636,session:'security_2026-04-04_03-34-08'},
+  {type:'audio',name:'audio_2026-04-06_08-38-25.m4a',date:'2026-04-06',time:'08:38',size:25815407,session:'security_2026-04-04_03-34-08'},
+  {type:'audio',name:'audio_2026-04-06_22-37-56.m4a',date:'2026-04-06',time:'22:37',size:261815,session:'security_2026-04-04_03-34-08'},
+  {type:'audio',name:'audio_2026-04-07_08-14-54.m4a',date:'2026-04-07',time:'08:14',size:23161282,session:'security_2026-04-04_03-34-08'},
+  {type:'audio',name:'audio_2026-04-07_21-10-18.m4a',date:'2026-04-07',time:'21:10',size:17308696,session:'security_2026-04-04_03-34-08'},
+  {type:'audio',name:'audio_2026-04-07_22-10-18.m4a',date:'2026-04-07',time:'22:10',size:0,session:'security_2026-04-04_03-34-08'},
+  {type:'audio',name:'audio_2026-04-07_22-10-21.m4a',date:'2026-04-07',time:'22:10',size:15167801,session:'security_2026-04-07_22-10-21'},
+  {type:'audio',name:'audio_2026-04-08_07-32-59.m4a',date:'2026-04-08',time:'07:32',size:11996092,session:'security_2026-04-07_22-10-21'},
+  {type:'audio',name:'audio_2026-04-08_08-32-59.m4a',date:'2026-04-08',time:'08:32',size:48,session:'security_2026-04-07_22-10-21'},
+  {type:'audio',name:'audio_2026-04-08_08-33-02.m4a',date:'2026-04-08',time:'08:33',size:23884114,session:'security_2026-04-08_08-33-02'},
+  {type:'audio',name:'audio_2026-04-08_22-41-09.m4a',date:'2026-04-08',time:'22:41',size:23092,session:'security_2026-04-08_08-33-02'},
+  {type:'audio',name:'audio_2026-04-09_10-13-07.m4a',date:'2026-04-09',time:'10:13',size:19535516,session:'security_2026-04-08_22-41-13'},
+  {type:'audio',name:'audio_2026-04-09_13-45-39.m4a',date:'2026-04-09',time:'13:45',size:28519854,session:'security_2026-04-08_22-41-13'},
+  {type:'audio',name:'audio_2026-04-09_14-45-39.m4a',date:'2026-04-09',time:'14:45',size:0,session:'security_2026-04-08_22-41-13'},
+  {type:'audio',name:'audio_2026-04-09_14-45-42.m4a',date:'2026-04-09',time:'14:45',size:28829519,session:'security_2026-04-09_14-45-42'},
+  {type:'audio',name:'audio_2026-04-09_15-45-42.m4a',date:'2026-04-09',time:'15:45',size:0,session:'security_2026-04-09_14-45-42'},
+  {type:'audio',name:'audio_2026-04-09_15-45-45.m4a',date:'2026-04-09',time:'15:45',size:28475795,session:'security_2026-04-09_15-45-45'},
+  {type:'audio',name:'audio_2026-04-09_16-45-45.m4a',date:'2026-04-09',time:'16:45',size:0,session:'security_2026-04-09_15-45-45'},
+  {type:'audio',name:'audio_2026-04-09_16-45-49.m4a',date:'2026-04-09',time:'16:45',size:4665763,session:'security_2026-04-09_16-45-48'},
+  {type:'audio',name:'audio_2026-04-09_19-51-09.m4a',date:'2026-04-09',time:'19:51',size:8264,session:'security_2026-04-09_16-45-48'},
+  {type:'audio',name:'audio_2026-04-09_19-51-12.m4a',date:'2026-04-09',time:'19:51',size:55014,session:'security_2026-04-09_19-51-12'},
+  {type:'audio',name:'audio_2026-04-09_20-51-02.m4a',date:'2026-04-09',time:'20:51',size:26264153,session:'security_2026-04-09_20-51-01'},
+  {type:'audio',name:'audio_2026-04-09_21-51-02.m4a',date:'2026-04-09',time:'21:51',size:29639164,session:'security_2026-04-09_20-51-01'},
+  {type:'audio',name:'audio_2026-04-09_22-51-02.m4a',date:'2026-04-09',time:'22:51',size:0,session:'security_2026-04-09_20-51-01'},
+  {type:'audio',name:'audio_2026-04-09_22-51-05.m4a',date:'2026-04-09',time:'22:51',size:23425508,session:'security_2026-04-09_22-51-05'},
+  {type:'audio',name:'audio_2026-04-10_12-04-54.m4a',date:'2026-04-10',time:'12:04',size:9958959,session:'security_2026-04-09_22-51-05'},
+];
+
+// ─── Helpers ───
+function formatSize(bytes) {
+  if (bytes === 0) return '0 B';
+  if (bytes < 1000) return bytes + ' B';
+  if (bytes < 1000000) return (bytes / 1000).toFixed(0) + ' KB';
+  if (bytes < 1000000000) return (bytes / 1000000).toFixed(1) + ' MB';
+  return (bytes / 1000000000).toFixed(2) + ' GB';
+}
+
+function getStatus(f) {
+  if (f.size === 0) return 'empty';
+  if (f.type === 'video' && f.size < 1000) return 'tiny';
+  if (f.type === 'audio' && f.size < 100000) return 'tiny';
+  return 'ok';
+}
+
+function getStatusClass(f) {
+  const s = getStatus(f);
+  if (s === 'ok') return 'ok';
+  if (s === 'empty') return 'bad';
+  return 'tiny';
+}
+
+// ─── Stats ───
+const totalFiles = files.length;
+const goodFiles = files.filter(f => getStatus(f) === 'ok').length;
+const emptyFiles = files.filter(f => getStatus(f) === 'empty').length;
+const totalSize = files.reduce((a, f) => a + f.size, 0);
+
+document.getElementById('statsBar').innerHTML = `
+  <div class="stat-card info"><div class="label">Total Files</div><div class="value">${totalFiles}</div><div class="detail">${files.filter(f=>f.type==='video').length} video, ${files.filter(f=>f.type==='audio').length} audio</div></div>
+  <div class="stat-card good"><div class="label">Good Files</div><div class="value">${goodFiles}</div><div class="detail">${files.filter(f=>f.type==='video'&&getStatus(f)==='ok').length} video, ${files.filter(f=>f.type==='audio'&&getStatus(f)==='ok').length} audio</div></div>
+  <div class="stat-card bad"><div class="label">Damaged</div><div class="value">${emptyFiles + files.filter(f=>getStatus(f)==='tiny').length}</div><div class="detail">${emptyFiles} empty, ${files.filter(f=>getStatus(f)==='tiny').length} tiny</div></div>
+  <div class="stat-card info"><div class="label">Total Size</div><div class="value">${formatSize(totalSize)}</div><div class="detail">Good: ${formatSize(files.filter(f=>getStatus(f)==='ok').reduce((a,f)=>a+f.size,0))}</div></div>
+`;
+
+// ─── Calendar ───
+const calEl = document.getElementById('calendar');
+const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+days.forEach(d => {
+  const h = document.createElement('div');
+  h.className = 'cal-header';
+  h.textContent = d;
+  calEl.appendChild(h);
+});
+
+// April 2026 starts on Wednesday (day 3)
+const startDow = 3; // Wed
+const daysInMonth = 30;
+const today = 10; // Apr 10
+
+// Group files by date
+const byDate = {};
+files.forEach(f => {
+  if (!byDate[f.date]) byDate[f.date] = [];
+  byDate[f.date].push(f);
+});
+
+// Empty cells before day 1
+for (let i = 0; i < startDow; i++) {
+  const empty = document.createElement('div');
+  empty.className = 'cal-day empty';
+  calEl.appendChild(empty);
+}
+
+for (let d = 1; d <= daysInMonth; d++) {
+  const dateStr = `2026-04-${String(d).padStart(2, '0')}`;
+  const dayFiles = byDate[dateStr] || [];
+  const cell = document.createElement('div');
+  const hasData = dayFiles.length > 0;
+
+  cell.className = `cal-day${hasData ? ' has-data' : ''}${d === today ? ' today' : ''}`;
+
+  const num = document.createElement('div');
+  num.className = 'day-number';
+  num.textContent = d;
+  cell.appendChild(num);
+
+  if (hasData) {
+    // Show significant files first (good videos, then good audio), skip crash-loop junk
+    const significant = dayFiles.filter(f => getStatus(f) === 'ok');
+    const bad = dayFiles.filter(f => getStatus(f) !== 'ok');
+    const display = [...significant, ...bad];
+    const maxShow = 5;
+
+    display.slice(0, maxShow).forEach(f => {
+      const entry = document.createElement('div');
+      const statusCls = getStatusClass(f);
+      entry.className = `file-entry ${f.type} ${statusCls}`;
+      entry.innerHTML = `<div class="dot"></div><span class="file-time">${f.time}</span><span class="file-size">${f.size === 0 ? '∅' : formatSize(f.size)}</span>`;
+
+      entry.addEventListener('mouseenter', (e) => showTooltip(e, f));
+      entry.addEventListener('mouseleave', hideTooltip);
+      cell.appendChild(entry);
+    });
+
+    if (display.length > maxShow) {
+      const more = document.createElement('div');
+      more.className = 'more-indicator';
+      more.textContent = `+${display.length - maxShow} more`;
+      cell.appendChild(more);
+    }
+  }
+
+  calEl.appendChild(cell);
+}
+
+// ─── Timeline ───
+const timelineContainer = document.getElementById('timelineContainer');
+const activeDates = ['2026-04-03','2026-04-04','2026-04-05','2026-04-06','2026-04-07','2026-04-08','2026-04-09','2026-04-10'];
+
+activeDates.forEach(date => {
+  const dayFiles = (byDate[date] || []).filter(f => getStatus(f) === 'ok' || f.size > 0);
+  if (dayFiles.length === 0 && !['2026-04-05','2026-04-06'].includes(date)) return;
+
+  const row = document.createElement('div');
+  row.className = 'timeline-row';
+
+  const label = document.createElement('div');
+  label.className = 'timeline-label';
+  const d = new Date(date + 'T00:00:00');
+  label.textContent = `${d.toLocaleDateString('en-US', { weekday: 'short' })} ${d.getDate()}`;
+  row.appendChild(label);
+
+  const track = document.createElement('div');
+  track.className = 'timeline-track';
+
+  dayFiles.forEach(f => {
+    const [h, m] = f.time.split(':').map(Number);
+    const minuteOfDay = h * 60 + m;
+    const leftPct = (minuteOfDay / 1440) * 100;
+
+    // Estimate duration from file size
+    let widthMin = 5; // min visual width in minutes
+    if (f.type === 'video' && f.size > 1000000) {
+      widthMin = Math.max(10, Math.min(60, f.size / 5000000)); // rough estimate
+    } else if (f.type === 'audio' && f.size > 100000) {
+      widthMin = Math.max(15, Math.min(65, f.size / 500000)); // ~1hr chunks
+    }
+    const widthPct = Math.min((widthMin / 1440) * 100, 100 - leftPct);
+
+    const block = document.createElement('div');
+    const status = getStatus(f);
+    block.className = `timeline-block ${f.type}${status === 'empty' ? ' empty-file' : ''}`;
+    block.style.left = leftPct + '%';
+    block.style.width = Math.max(0.3, widthPct) + '%';
+
+    if (status === 'tiny') {
+      block.style.opacity = '0.35';
+    }
+
+    block.addEventListener('mouseenter', (e) => showTooltip(e, f));
+    block.addEventListener('mouseleave', hideTooltip);
+    track.appendChild(block);
+  });
+
+  row.appendChild(track);
+  timelineContainer.appendChild(row);
+});
+
+// Hour labels
+const hoursDiv = document.createElement('div');
+hoursDiv.className = 'timeline-hours';
+for (let h = 0; h < 24; h += 3) {
+  const lbl = document.createElement('div');
+  lbl.className = 'timeline-hour';
+  lbl.style.flex = '3';
+  lbl.textContent = `${String(h).padStart(2,'0')}:00`;
+  hoursDiv.appendChild(lbl);
+}
+timelineContainer.appendChild(hoursDiv);
+
+// ─── Session cards ───
+const sessions = {};
+files.forEach(f => {
+  if (!sessions[f.session]) sessions[f.session] = [];
+  sessions[f.session].push(f);
+});
+
+const sessionGrid = document.getElementById('sessionGrid');
+// Skip the crash-loop sessions (Apr 3 23:24-23:26)
+const sessionKeys = Object.keys(sessions).sort().filter(s => {
+  const sessionFiles = sessions[s];
+  // Skip if ALL files are empty/tiny (crash loop sessions)
+  return sessionFiles.some(f => getStatus(f) === 'ok');
+});
+
+sessionKeys.forEach(sKey => {
+  const sFiles = sessions[sKey];
+  const card = document.createElement('div');
+  card.className = 'session-card';
+
+  const title = document.createElement('div');
+  title.className = 'session-title';
+  title.textContent = '📂 ' + sKey.replace('security_', '');
+  card.appendChild(title);
+
+  const list = document.createElement('ul');
+  list.className = 'file-list';
+
+  sFiles.forEach(f => {
+    const li = document.createElement('li');
+    const status = getStatus(f);
+    const icon = f.type === 'video' ? '🎬' : '🎧';
+    const badge = status === 'ok' ? '<span class="badge ok">OK</span>' :
+                  status === 'empty' ? '<span class="badge empty">EMPTY</span>' :
+                  '<span class="badge tiny">TINY</span>';
+    li.innerHTML = `<span class="fname">${icon} ${f.name}</span><span class="fsize">${formatSize(f.size)} ${badge}</span>`;
+    list.appendChild(li);
+  });
+
+  card.appendChild(list);
+  sessionGrid.appendChild(card);
+});
+
+// ─── Tooltip ───
+const tooltipEl = document.getElementById('tooltip');
+
+function showTooltip(e, f) {
+  const status = getStatus(f);
+  const statusLabel = status === 'ok' ? '✅ Good' : status === 'empty' ? '❌ Empty' : '⚠️ Tiny';
+  tooltipEl.innerHTML = `
+    <div class="tt-title">${f.type === 'video' ? '🎬' : '🎧'} ${f.name}</div>
+    <div class="tt-row">Size: <span>${formatSize(f.size)}</span></div>
+    <div class="tt-row">Status: <span>${statusLabel}</span></div>
+    <div class="tt-row">Session: <span>${f.session.replace('security_','')}</span></div>
+  `;
+  tooltipEl.classList.add('show');
+  positionTooltip(e);
+}
+
+function positionTooltip(e) {
+  const tt = tooltipEl;
+  let x = e.clientX + 14;
+  let y = e.clientY + 14;
+  if (x + 300 > window.innerWidth) x = e.clientX - 310;
+  if (y + 120 > window.innerHeight) y = e.clientY - 120;
+  tt.style.left = x + 'px';
+  tt.style.top = y + 'px';
+}
+
+function hideTooltip() {
+  tooltipEl.classList.remove('show');
+}
+
+document.addEventListener('mousemove', (e) => {
+  if (tooltipEl.classList.contains('show')) positionTooltip(e);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+# Video files
+*.mov
+recovered_*.mov
+
+# Executables and builds
+untrunc/
+ffmpeg-darwin-arm64
+ffmpeg-darwin-arm64.gz
+
+# macOS
+.DS_Store
+
+# Virtual environments
+venv/
+.env
+
+# Data and Logs
+security_*/
+recovery_log*.txt
+*.m4a
+*.mov
+
+# Binaries and archives
+ffmpeg
+ffmpeg.zip
+ffplay
+ffprobe
+bin/
