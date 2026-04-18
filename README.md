@@ -1,4 +1,4 @@
-# Robot Mac Timelapse
+# Robot Mac Marathon
 
 A reliable, async-signal-safe macOS command-line tool for capturing video and audio time-lapses.
 
