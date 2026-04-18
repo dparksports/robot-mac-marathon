@@ -17,6 +17,13 @@ A reliable, async-signal-safe macOS command-line tool for capturing video and au
   xcode-select --install
   ```
 
+### FFmpeg Dependencies
+
+The Python recovery and muxing scripts require FFmpeg binaries locally. You can instantly install them into this folder without needing Homebrew:
+```bash
+./install_ffmpeg.sh
+```
+
 ## Permissions (Camera & Microphone)
 
 macOS requires explicit user consent for camera and microphone access. **This is a one-time setup** — once granted, the permission persists for the compiled binary.
