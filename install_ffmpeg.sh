@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Robot Mac Marathon - FFmpeg Installer Script
-# Downloads and extracts static macOS binaries for ffmpeg, ffprobe, and ffplay
-# without requiring Homebrew. Files are installed locally in the project directory.
+# Extracts bundled static macOS binaries for ffmpeg, ffprobe, and ffplay
+# from the local zip file included in the repository.
 
 set -e
 
@@ -11,41 +11,26 @@ echo "   FFmpeg Locally Auto-Installer (macOS Apple Silicon) "
 echo "======================================================="
 echo ""
 
-# The directory where the script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BIN_DIR="$SCRIPT_DIR"
+ZIP_FILE="$SCRIPT_DIR/ffmpeg-mac.zip"
 
-echo "[*] Destination folder: $BIN_DIR"
-echo ""
+if [ ! -f "$ZIP_FILE" ]; then
+    echo "[!] Error: Bundled $ZIP_FILE was not found in the repository."
+    exit 1
+fi
 
-download_binary() {
-    local name=$1
-    local url=$2
-    local zip_file="/tmp/${name}.zip"
+echo "[-] Extracting local binaries from ffmpeg-mac.zip..."
+unzip -q -o "$ZIP_FILE" -d "$BIN_DIR"
 
-    echo "[-] Downloading $name..."
-    curl -sL "$url" -o "$zip_file"
-
-    echo "[-] Extracting $name..."
-    # The evermeet zip contains the binary at the root
-    unzip -q -o "$zip_file" -d "$BIN_DIR"
-    
-    # Ensure it's executable
-    chmod +x "$BIN_DIR/$name"
-    
-    # Cleanup zip
-    rm -f "$zip_file"
-    
-    # Clear the Apple quarantine flag so macOS doesn't block it from running silently
-    xattr -d com.apple.quarantine "$BIN_DIR/$name" 2>/dev/null || true
-    
-    echo "[✓] $name installed successfully!"
-}
-
-# Download latest stable ffmpeg, ffprobe, and ffplay from evermeet (macOS static builds)
-download_binary "ffmpeg"  "https://evermeet.cx/ffmpeg/getrelease/zip"
-download_binary "ffprobe" "https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip"
-download_binary "ffplay"  "https://evermeet.cx/ffmpeg/getrelease/ffplay/zip"
+echo "[-] Configuring execution permissions..."
+for binary in ffmpeg ffprobe ffplay; do
+    if [ -f "$BIN_DIR/$binary" ]; then
+        chmod +x "$BIN_DIR/$binary"
+        # Clear the Apple quarantine flag so macOS doesn't block it from running silently
+        xattr -d com.apple.quarantine "$BIN_DIR/$binary" 2>/dev/null || true
+    fi
+done
 
 echo ""
 echo "======================================================="
