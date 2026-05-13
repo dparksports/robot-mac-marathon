@@ -14,13 +14,17 @@ timelapse_security
 
 # Virtual environments
 venv/
+.venv/
 .env
 
 # Data and Logs
 security_*/
 recovery_log*.txt
+intrusion_report.html
+intrusion_thumbnails/
 *.m4a
 *.mov
+*.json
 
 # Binaries and archives
 ffmpeg

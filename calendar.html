@@ -449,116 +449,7 @@
 
 <script>
 // ─── Raw data ───
-const files = [
-  // MOV files
-  {type:'video',name:'trigger_2026-04-03_23-24-29.mov',date:'2026-04-03',time:'23:24',size:0,session:'security_2026-04-03_23-24-29'},
-  {type:'video',name:'trigger_2026-04-03_23-24-33.mov',date:'2026-04-03',time:'23:24',size:0,session:'security_2026-04-03_23-24-33'},
-  {type:'video',name:'trigger_2026-04-03_23-24-37.mov',date:'2026-04-03',time:'23:24',size:0,session:'security_2026-04-03_23-24-37'},
-  {type:'video',name:'trigger_2026-04-03_23-24-41.mov',date:'2026-04-03',time:'23:24',size:0,session:'security_2026-04-03_23-24-41'},
-  {type:'video',name:'trigger_2026-04-03_23-24-45.mov',date:'2026-04-03',time:'23:24',size:0,session:'security_2026-04-03_23-24-45'},
-  {type:'video',name:'trigger_2026-04-03_23-24-49.mov',date:'2026-04-03',time:'23:24',size:0,session:'security_2026-04-03_23-24-48'},
-  {type:'video',name:'trigger_2026-04-03_23-24-52.mov',date:'2026-04-03',time:'23:24',size:0,session:'security_2026-04-03_23-24-52'},
-  {type:'video',name:'trigger_2026-04-03_23-24-56.mov',date:'2026-04-03',time:'23:24',size:0,session:'security_2026-04-03_23-24-56'},
-  {type:'video',name:'trigger_2026-04-03_23-25-00.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-00'},
-  {type:'video',name:'trigger_2026-04-03_23-25-04.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-04'},
-  {type:'video',name:'trigger_2026-04-03_23-25-07.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-07'},
-  {type:'video',name:'trigger_2026-04-03_23-25-11.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-11'},
-  {type:'video',name:'trigger_2026-04-03_23-25-15.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-15'},
-  {type:'video',name:'trigger_2026-04-03_23-25-19.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-19'},
-  {type:'video',name:'trigger_2026-04-03_23-25-23.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-22'},
-  {type:'video',name:'trigger_2026-04-03_23-25-26.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-26'},
-  {type:'video',name:'trigger_2026-04-03_23-25-30.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-30'},
-  {type:'video',name:'trigger_2026-04-03_23-25-34.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-34'},
-  {type:'video',name:'trigger_2026-04-03_23-25-38.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-38'},
-  {type:'video',name:'trigger_2026-04-03_23-25-42.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-41'},
-  {type:'video',name:'trigger_2026-04-03_23-25-45.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-45'},
-  {type:'video',name:'trigger_2026-04-03_23-25-49.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-49'},
-  {type:'video',name:'trigger_2026-04-03_23-25-53.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-53'},
-  {type:'video',name:'trigger_2026-04-03_23-25-57.mov',date:'2026-04-03',time:'23:25',size:0,session:'security_2026-04-03_23-25-57'},
-  {type:'video',name:'trigger_2026-04-03_23-26-01.mov',date:'2026-04-03',time:'23:26',size:0,session:'security_2026-04-03_23-26-00'},
-  {type:'video',name:'trigger_2026-04-03_23-26-04.mov',date:'2026-04-03',time:'23:26',size:0,session:'security_2026-04-03_23-26-04'},
-  {type:'video',name:'trigger_2026-04-03_23-26-08.mov',date:'2026-04-03',time:'23:26',size:0,session:'security_2026-04-03_23-26-08'},
-  {type:'video',name:'trigger_2026-04-03_23-26-12.mov',date:'2026-04-03',time:'23:26',size:0,session:'security_2026-04-03_23-26-12'},
-  {type:'video',name:'trigger_2026-04-03_23-26-16.mov',date:'2026-04-03',time:'23:26',size:0,session:'security_2026-04-03_23-26-16'},
-  {type:'video',name:'trigger_2026-04-03_23-34-02.mov',date:'2026-04-03',time:'23:34',size:265434615,session:'security_2026-04-03_23-34-01'},
-  {type:'video',name:'trigger_2026-04-04_00-34-05.mov',date:'2026-04-04',time:'00:34',size:773624135,session:'security_2026-04-04_00-34-05'},
-  {type:'video',name:'trigger_2026-04-04_03-34-08.mov',date:'2026-04-04',time:'03:34',size:488421473,session:'security_2026-04-04_03-34-08'},
-  {type:'video',name:'trigger_2026-04-07_22-10-21.mov',date:'2026-04-07',time:'22:10',size:47666561,session:'security_2026-04-07_22-10-21'},
-  {type:'video',name:'trigger_2026-04-08_08-33-02.mov',date:'2026-04-08',time:'08:33',size:38418409,session:'security_2026-04-08_08-33-02'},
-  {type:'video',name:'trigger_2026-04-09_10-13-07.mov',date:'2026-04-09',time:'10:13',size:307104228,session:'security_2026-04-08_22-41-13'},
-  {type:'video',name:'trigger_2026-04-09_14-45-42.mov',date:'2026-04-09',time:'14:45',size:313271290,session:'security_2026-04-09_14-45-42'},
-  {type:'video',name:'trigger_2026-04-09_15-45-45.mov',date:'2026-04-09',time:'15:45',size:265769580,session:'security_2026-04-09_15-45-45'},
-  {type:'video',name:'trigger_2026-04-09_16-45-49.mov',date:'2026-04-09',time:'16:45',size:40390827,session:'security_2026-04-09_16-45-48'},
-  {type:'video',name:'trigger_2026-04-09_19-51-12.mov',date:'2026-04-09',time:'19:51',size:608410,session:'security_2026-04-09_19-51-12'},
-  {type:'video',name:'trigger_2026-04-09_20-51-02.mov',date:'2026-04-09',time:'20:51',size:138009111,session:'security_2026-04-09_20-51-01'},
-  {type:'video',name:'trigger_2026-04-09_22-51-05.mov',date:'2026-04-09',time:'22:51',size:70914040,session:'security_2026-04-09_22-51-05'},
-
-  // M4A files  
-  {type:'audio',name:'audio_2026-04-03_23-24-29.m4a',date:'2026-04-03',time:'23:24',size:5019,session:'security_2026-04-03_23-24-29'},
-  {type:'audio',name:'audio_2026-04-03_23-24-33.m4a',date:'2026-04-03',time:'23:24',size:3363,session:'security_2026-04-03_23-24-33'},
-  {type:'audio',name:'audio_2026-04-03_23-24-37.m4a',date:'2026-04-03',time:'23:24',size:3387,session:'security_2026-04-03_23-24-37'},
-  {type:'audio',name:'audio_2026-04-03_23-24-41.m4a',date:'2026-04-03',time:'23:24',size:3302,session:'security_2026-04-03_23-24-41'},
-  {type:'audio',name:'audio_2026-04-03_23-24-45.m4a',date:'2026-04-03',time:'23:24',size:3296,session:'security_2026-04-03_23-24-45'},
-  {type:'audio',name:'audio_2026-04-03_23-24-49.m4a',date:'2026-04-03',time:'23:24',size:3253,session:'security_2026-04-03_23-24-48'},
-  {type:'audio',name:'audio_2026-04-03_23-24-52.m4a',date:'2026-04-03',time:'23:24',size:3241,session:'security_2026-04-03_23-24-52'},
-  {type:'audio',name:'audio_2026-04-03_23-24-56.m4a',date:'2026-04-03',time:'23:24',size:3181,session:'security_2026-04-03_23-24-56'},
-  {type:'audio',name:'audio_2026-04-03_23-25-00.m4a',date:'2026-04-03',time:'23:25',size:3311,session:'security_2026-04-03_23-25-00'},
-  {type:'audio',name:'audio_2026-04-03_23-25-04.m4a',date:'2026-04-03',time:'23:25',size:3285,session:'security_2026-04-03_23-25-04'},
-  {type:'audio',name:'audio_2026-04-03_23-25-07.m4a',date:'2026-04-03',time:'23:25',size:3256,session:'security_2026-04-03_23-25-07'},
-  {type:'audio',name:'audio_2026-04-03_23-25-11.m4a',date:'2026-04-03',time:'23:25',size:3306,session:'security_2026-04-03_23-25-11'},
-  {type:'audio',name:'audio_2026-04-03_23-25-15.m4a',date:'2026-04-03',time:'23:25',size:3053,session:'security_2026-04-03_23-25-15'},
-  {type:'audio',name:'audio_2026-04-03_23-25-19.m4a',date:'2026-04-03',time:'23:25',size:3314,session:'security_2026-04-03_23-25-19'},
-  {type:'audio',name:'audio_2026-04-03_23-25-23.m4a',date:'2026-04-03',time:'23:25',size:3288,session:'security_2026-04-03_23-25-22'},
-  {type:'audio',name:'audio_2026-04-03_23-25-26.m4a',date:'2026-04-03',time:'23:25',size:3278,session:'security_2026-04-03_23-25-26'},
-  {type:'audio',name:'audio_2026-04-03_23-25-30.m4a',date:'2026-04-03',time:'23:25',size:3270,session:'security_2026-04-03_23-25-30'},
-  {type:'audio',name:'audio_2026-04-03_23-25-34.m4a',date:'2026-04-03',time:'23:25',size:3251,session:'security_2026-04-03_23-25-34'},
-  {type:'audio',name:'audio_2026-04-03_23-25-38.m4a',date:'2026-04-03',time:'23:25',size:2985,session:'security_2026-04-03_23-25-38'},
-  {type:'audio',name:'audio_2026-04-03_23-25-42.m4a',date:'2026-04-03',time:'23:25',size:3604,session:'security_2026-04-03_23-25-41'},
-  {type:'audio',name:'audio_2026-04-03_23-25-45.m4a',date:'2026-04-03',time:'23:25',size:3442,session:'security_2026-04-03_23-25-45'},
-  {type:'audio',name:'audio_2026-04-03_23-25-49.m4a',date:'2026-04-03',time:'23:25',size:3284,session:'security_2026-04-03_23-25-49'},
-  {type:'audio',name:'audio_2026-04-03_23-25-53.m4a',date:'2026-04-03',time:'23:25',size:3416,session:'security_2026-04-03_23-25-53'},
-  {type:'audio',name:'audio_2026-04-03_23-25-57.m4a',date:'2026-04-03',time:'23:25',size:3106,session:'security_2026-04-03_23-25-57'},
-  {type:'audio',name:'audio_2026-04-03_23-26-01.m4a',date:'2026-04-03',time:'23:26',size:3454,session:'security_2026-04-03_23-26-00'},
-  {type:'audio',name:'audio_2026-04-03_23-26-04.m4a',date:'2026-04-03',time:'23:26',size:3402,session:'security_2026-04-03_23-26-04'},
-  {type:'audio',name:'audio_2026-04-03_23-26-08.m4a',date:'2026-04-03',time:'23:26',size:3077,session:'security_2026-04-03_23-26-08'},
-  {type:'audio',name:'audio_2026-04-03_23-26-12.m4a',date:'2026-04-03',time:'23:26',size:3633,session:'security_2026-04-03_23-26-12'},
-  {type:'audio',name:'audio_2026-04-03_23-26-16.m4a',date:'2026-04-03',time:'23:26',size:3417,session:'security_2026-04-03_23-26-16'},
-  {type:'audio',name:'audio_2026-04-03_23-34-02.m4a',date:'2026-04-03',time:'23:34',size:29661730,session:'security_2026-04-03_23-34-01'},
-  {type:'audio',name:'audio_2026-04-04_00-34-02.m4a',date:'2026-04-04',time:'00:34',size:0,session:'security_2026-04-03_23-34-01'},
-  {type:'audio',name:'audio_2026-04-04_00-34-05.m4a',date:'2026-04-04',time:'00:34',size:29505077,session:'security_2026-04-04_00-34-05'},
-  {type:'audio',name:'audio_2026-04-04_01-34-05.m4a',date:'2026-04-04',time:'01:34',size:29493970,session:'security_2026-04-04_00-34-05'},
-  {type:'audio',name:'audio_2026-04-04_02-34-05.m4a',date:'2026-04-04',time:'02:34',size:29503033,session:'security_2026-04-04_00-34-05'},
-  {type:'audio',name:'audio_2026-04-04_03-34-05.m4a',date:'2026-04-04',time:'03:34',size:0,session:'security_2026-04-04_00-34-05'},
-  {type:'audio',name:'audio_2026-04-04_03-34-08.m4a',date:'2026-04-04',time:'03:34',size:4930290,session:'security_2026-04-04_03-34-08'},
-  {type:'audio',name:'audio_2026-04-04_19-49-22.m4a',date:'2026-04-04',time:'19:49',size:9231745,session:'security_2026-04-04_03-34-08'},
-  {type:'audio',name:'audio_2026-04-05_09-14-41.m4a',date:'2026-04-05',time:'09:14',size:6881402,session:'security_2026-04-04_03-34-08'},
-  {type:'audio',name:'audio_2026-04-05_23-13-11.m4a',date:'2026-04-05',time:'23:13',size:15838636,session:'security_2026-04-04_03-34-08'},
-  {type:'audio',name:'audio_2026-04-06_08-38-25.m4a',date:'2026-04-06',time:'08:38',size:25815407,session:'security_2026-04-04_03-34-08'},
-  {type:'audio',name:'audio_2026-04-06_22-37-56.m4a',date:'2026-04-06',time:'22:37',size:261815,session:'security_2026-04-04_03-34-08'},
-  {type:'audio',name:'audio_2026-04-07_08-14-54.m4a',date:'2026-04-07',time:'08:14',size:23161282,session:'security_2026-04-04_03-34-08'},
-  {type:'audio',name:'audio_2026-04-07_21-10-18.m4a',date:'2026-04-07',time:'21:10',size:17308696,session:'security_2026-04-04_03-34-08'},
-  {type:'audio',name:'audio_2026-04-07_22-10-18.m4a',date:'2026-04-07',time:'22:10',size:0,session:'security_2026-04-04_03-34-08'},
-  {type:'audio',name:'audio_2026-04-07_22-10-21.m4a',date:'2026-04-07',time:'22:10',size:15167801,session:'security_2026-04-07_22-10-21'},
-  {type:'audio',name:'audio_2026-04-08_07-32-59.m4a',date:'2026-04-08',time:'07:32',size:11996092,session:'security_2026-04-07_22-10-21'},
-  {type:'audio',name:'audio_2026-04-08_08-32-59.m4a',date:'2026-04-08',time:'08:32',size:48,session:'security_2026-04-07_22-10-21'},
-  {type:'audio',name:'audio_2026-04-08_08-33-02.m4a',date:'2026-04-08',time:'08:33',size:23884114,session:'security_2026-04-08_08-33-02'},
-  {type:'audio',name:'audio_2026-04-08_22-41-09.m4a',date:'2026-04-08',time:'22:41',size:23092,session:'security_2026-04-08_08-33-02'},
-  {type:'audio',name:'audio_2026-04-09_10-13-07.m4a',date:'2026-04-09',time:'10:13',size:19535516,session:'security_2026-04-08_22-41-13'},
-  {type:'audio',name:'audio_2026-04-09_13-45-39.m4a',date:'2026-04-09',time:'13:45',size:28519854,session:'security_2026-04-08_22-41-13'},
-  {type:'audio',name:'audio_2026-04-09_14-45-39.m4a',date:'2026-04-09',time:'14:45',size:0,session:'security_2026-04-08_22-41-13'},
-  {type:'audio',name:'audio_2026-04-09_14-45-42.m4a',date:'2026-04-09',time:'14:45',size:28829519,session:'security_2026-04-09_14-45-42'},
-  {type:'audio',name:'audio_2026-04-09_15-45-42.m4a',date:'2026-04-09',time:'15:45',size:0,session:'security_2026-04-09_14-45-42'},
-  {type:'audio',name:'audio_2026-04-09_15-45-45.m4a',date:'2026-04-09',time:'15:45',size:28475795,session:'security_2026-04-09_15-45-45'},
-  {type:'audio',name:'audio_2026-04-09_16-45-45.m4a',date:'2026-04-09',time:'16:45',size:0,session:'security_2026-04-09_15-45-45'},
-  {type:'audio',name:'audio_2026-04-09_16-45-49.m4a',date:'2026-04-09',time:'16:45',size:4665763,session:'security_2026-04-09_16-45-48'},
-  {type:'audio',name:'audio_2026-04-09_19-51-09.m4a',date:'2026-04-09',time:'19:51',size:8264,session:'security_2026-04-09_16-45-48'},
-  {type:'audio',name:'audio_2026-04-09_19-51-12.m4a',date:'2026-04-09',time:'19:51',size:55014,session:'security_2026-04-09_19-51-12'},
-  {type:'audio',name:'audio_2026-04-09_20-51-02.m4a',date:'2026-04-09',time:'20:51',size:26264153,session:'security_2026-04-09_20-51-01'},
-  {type:'audio',name:'audio_2026-04-09_21-51-02.m4a',date:'2026-04-09',time:'21:51',size:29639164,session:'security_2026-04-09_20-51-01'},
-  {type:'audio',name:'audio_2026-04-09_22-51-02.m4a',date:'2026-04-09',time:'22:51',size:0,session:'security_2026-04-09_20-51-01'},
-  {type:'audio',name:'audio_2026-04-09_22-51-05.m4a',date:'2026-04-09',time:'22:51',size:23425508,session:'security_2026-04-09_22-51-05'},
-  {type:'audio',name:'audio_2026-04-10_12-04-54.m4a',date:'2026-04-10',time:'12:04',size:9958959,session:'security_2026-04-09_22-51-05'},
-];
+let files = [];
 
 // ─── Helpers ───
 function formatSize(bytes) {
@@ -583,6 +474,10 @@ function getStatusClass(f) {
   return 'tiny';
 }
 
+async function init() {
+  try {
+    const resp = await fetch("files.json");
+    files = await resp.json();
 // ─── Stats ───
 const totalFiles = files.length;
 const goodFiles = files.filter(f => getStatus(f) === 'ok').length;
@@ -669,11 +564,11 @@ for (let d = 1; d <= daysInMonth; d++) {
 
 // ─── Timeline ───
 const timelineContainer = document.getElementById('timelineContainer');
-const activeDates = ['2026-04-03','2026-04-04','2026-04-05','2026-04-06','2026-04-07','2026-04-08','2026-04-09','2026-04-10'];
+const activeDates = Object.keys(byDate).sort();
 
 activeDates.forEach(date => {
   const dayFiles = (byDate[date] || []).filter(f => getStatus(f) === 'ok' || f.size > 0);
-  if (dayFiles.length === 0 && !['2026-04-05','2026-04-06'].includes(date)) return;
+  if (dayFiles.length === 0) return;
 
   const row = document.createElement('div');
   row.className = 'timeline-row';
@@ -775,6 +670,13 @@ sessionKeys.forEach(sKey => {
   sessionGrid.appendChild(card);
 });
 
+  } catch (err) {
+    console.error("Failed to load files:", err);
+    document.getElementById("statsBar").innerHTML = "<div style="color:var(--red);padding:20px">Failed to load files.json</div>";
+  }
+}
+
+init();
 // ─── Tooltip ───
 const tooltipEl = document.getElementById('tooltip');
 
