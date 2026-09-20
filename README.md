@@ -36,6 +36,17 @@ cd robot-security-timelapse-v1.0.0-macos-arm64
 - Built-in disk space monitoring (stops gracefully if free space drops below 5GB)
 - Hardware-accelerated H.264 encoding
 
+## Feature Menu
+
+Not sure which tool does what? The interactive menu lists every feature with its options, prompts you for each setting (Enter accepts the default), and runs it:
+
+```bash
+python3 menu.py          # interactive menu
+python3 menu.py --list   # print all features + options without prompts
+```
+
+It covers both recording modes, intrusion detection for either mode, coverage summaries, the calendar and player views, the recovery/muxing tools, and setup (FFmpeg install, venv creation). Each entry shows its available flags and defaults before running.
+
 ## Requirements
 
 - **macOS 14 (Sonoma) or later** — this tool uses AVFoundation APIs that require a recent version of macOS. It will not compile or run correctly on older versions.
@@ -103,7 +114,56 @@ If you have older recordings from a previous version of the script that crashed 
 python3 recover_mov.py
 ```
 
+## Intrusion Detection
+
+`detect_intrusion.py` analyzes recordings from either mode and flags potential intrusions. It requires the local FFmpeg binaries (`./install_ffmpeg.sh`) and a Python virtualenv:
+
+```bash
+python3 -m venv .venv
+.venv/bin/pip install numpy pillow
+```
+
+### Security sessions (sound-triggered clips)
+
+Run from the folder containing your `security_*/` session folders:
+
+```bash
+.venv/bin/python detect_intrusion.py
+```
+
+Each trigger clip is scored with three signals, then clustered:
+
+- **Motion & presence** — 12 evenly-spaced frames are extracted per clip and compared pixel-by-pixel. *Movement* (pixels changing between consecutive frames) catches someone walking through; *presence* (pixels deviating from the clip's median frame) catches someone standing still.
+- **Audio correlation** — the continuous hourly `.m4a` recordings are scanned with `silencedetect` for loud periods; a trigger clip whose timestamp falls inside one is marked audio-confirmed. Since the mic records independently of the trigger pipeline, this is real corroboration, not the trigger echoing itself.
+- **File size (corroborating only)** — HEVC targets a fixed bitrate, so a size anomaly (>12% from the session median) only flags a clip when the audio confirms it too.
+- **Event clustering** — flagged clips within 5 minutes of each other are grouped into a correlated intrusion event; isolated clips are more likely one-off noise.
+
+### Timelapse recordings (continuous camera)
+
+```bash
+.venv/bin/python detect_intrusion.py --timelapse timelapse_YYYY-MM-DD_HH-MM-SS.mov
+```
+
+Frames are sampled every 30s and compared against the pixelwise **median frame** (the empty scene). Sustained deviations across consecutive samples — with single-sample flickers (auto-exposure, light changes) filtered out — are reported as presence events with timestamps and thumbnails.
+
+### Options
+
+| Flag | Default | Description |
+|---|---|---|
+| `--threshold <pct>` | `15` | Changed-pixel % to flag motion/presence |
+| `--size-threshold <pct>` | `12` | File-size anomaly % (audio-corroborated only) |
+| `--cluster-window <sec>` | `300` | Gap below which flagged clips form one event |
+| `--timelapse <mov...>` | — | Continuous timelapse files to analyze |
+| `--tl-interval <sec>` | `30` | Sampling interval for timelapse analysis |
+| `--sessions <dir...>` | auto | Specific `security_*` folders |
+| `--no-motion` | — | Skip frame analysis (file-size/audio only) |
+| `--output <html>` | `intrusion_report.html` | Report path |
+
+Both modes can be combined in one report. The output is an HTML dashboard with summary cards, thumbnails for every flagged event, filterable event lists, per-session file-size timelines, and the timelapse deviation chart.
+
 ## Security Mode (Extended Battery)
+
+
 
 A low-power security recording mode designed to run for **5–7+ days** on a MacBook Air battery.
 
