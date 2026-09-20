@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="860" viewBox="0 0 1200 860" role="img" aria-label="Security mode: what one session records">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#0e1a2f"/>
+    </linearGradient>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#d97706"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="860" rx="24" fill="url(#bg2)"/>
+
+  <!-- Header -->
+  <text x="60" y="66" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="13" letter-spacing="3" fill="#64748b">SECURITY MODE · LOW POWER · ALWAYS-LISTENING</text>
+  <text x="60" y="112" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="36" font-weight="700" fill="#f1f5f9">What One Session Records</text>
+  <text x="60" y="142" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="16" fill="#94a3b8">Audio every hour, video only when a sound crosses the threshold.</text>
+
+  <!-- Left card: the session folder -->
+  <rect x="60" y="176" width="660" height="560" rx="20" fill="#111c30" stroke="#22344f" stroke-width="1.5"/>
+  <!-- folder tab -->
+  <path d="M88 200 h26 l10 12 h-36 z" fill="#fbbf24"/>
+  <text x="134" y="214" font-family="ui-monospace,Menlo,monospace" font-size="16" fill="#fbbf24">security_2026-09-14_06-54-57/</text>
+  <line x1="88" y1="240" x2="692" y2="240" stroke="#22344f"/>
+
+  <!-- Lane A: audio -->
+  <rect x="88" y="262" width="172" height="24" rx="12" fill="#0c2f22"/>
+  <text x="98" y="278" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="11.5" letter-spacing="1.5" fill="#34d399">MIC — ALWAYS ON</text>
+  <rect x="88" y="298" width="152" height="34" rx="9" fill="#0f2a1f" stroke="#1d4d33"/>
+  <text x="164" y="320" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="12.5" fill="#6ee7b7">audio_06-54.m4a</text>
+  <rect x="256" y="298" width="152" height="34" rx="9" fill="#0f2a1f" stroke="#1d4d33"/>
+  <text x="332" y="320" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="12.5" fill="#6ee7b7">audio_07-54.m4a</text>
+  <rect x="424" y="298" width="152" height="34" rx="9" fill="#0f2a1f" stroke="#1d4d33"/>
+  <text x="500" y="320" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="12.5" fill="#6ee7b7">audio_08-54.m4a</text>
+  <text x="596" y="322" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="18" font-weight="700" fill="#34d399">…</text>
+  <text x="88" y="362" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="13.5" fill="#94a3b8">one <tspan font-family="ui-monospace,Menlo,monospace" fill="#6ee7b7">.m4a</tspan> per hour · AAC 32 kbps · ~14 MB/h · never stops</text>
+
+  <!-- Lane B: video -->
+  <rect x="88" y="392" width="248" height="24" rx="12" fill="#2a2113"/>
+  <text x="98" y="408" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="11.5" letter-spacing="1.5" fill="#fbbf24">SOUND METER — LISTENING 24/7</text>
+
+  <rect x="88" y="430" width="180" height="68" rx="12" fill="#2a2113" stroke="#6b5618"/>
+  <text x="178" y="458" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="14" font-weight="600" fill="#fde68a">Sound exceeds</text>
+  <text x="178" y="480" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="13" fill="#d6c48a">−30 dB threshold</text>
+  <line x1="272" y1="464" x2="296" y2="464" stroke="#d97706" stroke-width="2.5" marker-end="url(#arw)"/>
+
+  <rect x="304" y="430" width="176" height="68" rx="12" fill="#2a2113" stroke="#6b5618"/>
+  <text x="392" y="458" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="14" font-weight="600" fill="#fde68a">Camera powers on</text>
+  <text x="392" y="480" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="13" fill="#d6c48a">(was fully off)</text>
+  <line x1="484" y1="464" x2="508" y2="464" stroke="#d97706" stroke-width="2.5" marker-end="url(#arw)"/>
+
+  <rect x="516" y="430" width="176" height="68" rx="12" fill="#2a2113" stroke="#6b5618"/>
+  <text x="604" y="458" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="14" font-weight="600" fill="#fde68a">Records 60 s</text>
+  <text x="604" y="480" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="13" fill="#d6c48a">HEVC + audio</text>
+
+  <rect x="88" y="522" width="278" height="34" rx="9" fill="#241d0f" stroke="#6b5618"/>
+  <text x="98" y="544" font-family="ui-monospace,Menlo,monospace" font-size="12.5" fill="#fde68a">trigger_2026-09-14_06-55-58.mov</text>
+  <text x="384" y="544" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="13.5" fill="#94a3b8">saved only when triggered · ~5 W burst</text>
+
+  <!-- Status strip -->
+  <line x1="88" y1="588" x2="692" y2="588" stroke="#22344f"/>
+  <text x="88" y="616" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="13.5" fill="#94a3b8">battery logged every 10 min · screen brightness 0 · auto-shutdown at 5%</text>
+
+  <rect x="88" y="636" width="298" height="72" rx="12" fill="#0f2a1f" stroke="#1d4d33"/>
+  <text x="108" y="674" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="22" font-weight="700" fill="#34d399">1 / hour</text>
+  <text x="108" y="696" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="13" fill="#9fb8a8">audio chunk cadence — runs 24/7</text>
+  <rect x="402" y="636" width="290" height="72" rx="12" fill="#241d0f" stroke="#6b5618"/>
+  <text x="422" y="674" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="22" font-weight="700" fill="#fbbf24">60 s</text>
+  <text x="422" y="696" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="13" fill="#c4b48a">video burst per trigger, then off</text>
+
+  <!-- Right card: tools -->
+  <rect x="760" y="176" width="380" height="560" rx="20" fill="#0d1626" stroke="#22344f" stroke-width="1.5"/>
+  <text x="788" y="218" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="20" font-weight="700" fill="#f1f5f9">After the recording</text>
+  <text x="788" y="244" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="13" fill="#94a3b8">point any tool at the <tspan font-family="ui-monospace,Menlo,monospace" fill="#7dd3fc">security_*/</tspan> folder</text>
+  <line x1="788" y1="262" x2="1112" y2="262" stroke="#22344f"/>
+
+  <text x="788" y="300" font-family="ui-monospace,Menlo,monospace" font-size="15" fill="#38bdf8">player.html</text>
+  <text x="788" y="322" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="13" fill="#94a3b8">browser playback, triggers synced to audio</text>
+  <text x="788" y="372" font-family="ui-monospace,Menlo,monospace" font-size="15" fill="#38bdf8">calendar.html</text>
+  <text x="788" y="394" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="13" fill="#94a3b8">per-day recording coverage heatmap</text>
+  <text x="788" y="444" font-family="ui-monospace,Menlo,monospace" font-size="15" fill="#38bdf8">detect_intrusion.py</text>
+  <text x="788" y="466" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="13" fill="#94a3b8">motion analysis → intrusion report</text>
+  <text x="788" y="516" font-family="ui-monospace,Menlo,monospace" font-size="15" fill="#38bdf8">recover_security.py</text>
+  <text x="788" y="538" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="13" fill="#94a3b8">salvage sessions after a crash</text>
+  <text x="788" y="588" font-family="ui-monospace,Menlo,monospace" font-size="15" fill="#38bdf8">mux_audio_video.py</text>
+  <text x="788" y="610" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="13" fill="#94a3b8">bake audio into trigger clips</text>
+  <text x="788" y="660" font-family="ui-monospace,Menlo,monospace" font-size="15" fill="#38bdf8">summarize_coverage.py</text>
+  <text x="788" y="682" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="13" fill="#94a3b8">gaps, hours, and file counts</text>
+
+  <!-- Footer -->
+  <line x1="60" y1="762" x2="1140" y2="762" stroke="#1c2a44"/>
+  <text x="600" y="798" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="14" fill="#64748b">Power: ~0.3 W idle · ~5 W burst · ~0.35 W blended — about 6 days on a MacBook Air battery</text>
+</svg>

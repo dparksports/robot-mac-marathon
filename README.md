@@ -1,6 +1,33 @@
 # Robot Mac Marathon
 
-A reliable, async-signal-safe macOS command-line tool for capturing video and audio time-lapses.
+A reliable, async-signal-safe macOS command-line tool for capturing video and audio time-lapses — with a low-power security mode that listens for days on battery.
+
+<p align="center">
+  <img src="docs/infographic-modes.svg" alt="Two recording modes compared: Timelapse (continuous) and Security (low power)" width="840">
+</p>
+
+## Download (v1.0.0)
+
+A prebuilt Apple Silicon binary of the Security recorder is available on the [releases page](https://github.com/dparksports/robot-mac-marathon/releases/tag/v1.0.0):
+
+- [`robot-security-timelapse-v1.0.0-macos-arm64.zip`](https://github.com/dparksports/robot-mac-marathon/releases/download/v1.0.0/robot-security-timelapse-v1.0.0-macos-arm64.zip) — the `timelapse_security` binary (Info.plist embedded), a `start.sh` restart wrapper, and a usage guide
+- [`SHA256SUMS.txt`](https://github.com/dparksports/robot-mac-marathon/releases/download/v1.0.0/SHA256SUMS.txt) — SHA-256 checksum for the zip
+
+Verify the download before unpacking it:
+
+```bash
+shasum -a 256 -c SHA256SUMS.txt
+# robot-security-timelapse-v1.0.0-macos-arm64.zip: OK
+```
+
+The binary is unsigned, so clear the quarantine flag that macOS attaches to downloaded files, then start recording:
+
+```bash
+unzip robot-security-timelapse-v1.0.0-macos-arm64.zip
+xattr -cr robot-security-timelapse-v1.0.0-macos-arm64
+cd robot-security-timelapse-v1.0.0-macos-arm64
+./start.sh
+```
 
 ## Features
 - Captures time-lapse frames from the default Mac camera at configurable intervals
@@ -80,11 +107,15 @@ python3 recover_mov.py
 
 A low-power security recording mode designed to run for **5–7+ days** on a MacBook Air battery.
 
+<p align="center">
+  <img src="docs/infographic-pipeline.svg" alt="What one security session records: hourly audio chunks and sound-triggered video clips" width="840">
+</p>
+
 ### How it works
 
 - **Microphone records continuous hourly audio** (~0.3W) — the camera is **fully off**
 - When sound exceeds a configurable dB threshold → camera turns on → records video for 60 seconds (with audio) → camera turns off
-- Audio is saved continuously in 1-hour chunks (e.g. `audio_2024-...m4a`)
+- Audio is saved continuously in 1-hour chunks (e.g. `audio_2026-09-14_06-54-57.m4a`)
 - Screen brightness is set to 0 on launch to save power
 - Battery level is logged every 10 minutes; auto-shuts down at 5%
 - Video is encoded in HEVC at 500 Kbps and Audio in AAC at 32 Kbps for minimal file size
