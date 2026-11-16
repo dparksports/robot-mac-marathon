@@ -1,0 +1,38 @@
+# Video files
+*.mov
+recovered_*.mov
+
+# Executables and builds
+untrunc/
+ffmpeg-darwin-arm64
+ffmpeg-darwin-arm64.gz
+timelapse
+timelapse_security
+
+# macOS
+.DS_Store
+
+# Virtual environments
+venv/
+.venv/
+.env
+
+# Data and Logs
+security_*/
+recovery_log*.txt
+intrusion_report.html
+intrusion_thumbnails/
+*.m4a
+*.mov
+*.json
+
+# Binaries and archives
+ffmpeg
+ffmpeg.zip
+ffplay
+ffprobe
+bin/
+
+# Python
+__pycache__/
+*.pyc
